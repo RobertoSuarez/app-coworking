@@ -1,3 +1,84 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.utils import timezone
+from django.core import serializers
+from decimal import Decimal
+from coworking.models import CoworkingSpace
+from users.models import UserProfile
+from .models import Reservation
+from .forms import ReservationForm
+from .utils import send_whatsapp_message, send_whatsapp_message_via_api
 
-# Create your views here.
+
+@login_required
+def create_reservation(request, space_id):
+    userProfile = UserProfile.objects.get(user=request.user)
+    space = get_object_or_404(CoworkingSpace, id=space_id)
+    if request.method == "POST":
+        form = ReservationForm(request.POST, user=request.user)
+        if form.is_valid():
+            reservation = form.save(commit=False)
+            reservation.user = request.user
+            reservation.space = space  # Asegurarse de asignar el espacio
+            # Calcular el precio total basado en el tipo de reserva
+            duration = (reservation.end_time - reservation.start_time).total_seconds()
+            if reservation.reservation_type == "hour":
+                hours = Decimal(duration / 3600)
+                reservation.total_price = space.price_per_hour * hours
+            elif reservation.reservation_type == "day":
+                days = Decimal(duration / 86400)
+                reservation.total_price = space.price_per_day * days
+            elif reservation.reservation_type == "week":
+                weeks = Decimal(duration / 604800)
+                reservation.total_price = space.price_per_week * weeks
+            elif reservation.reservation_type == "month":
+                months = Decimal(duration / 2592000)
+                reservation.total_price = space.price_per_month * months
+            reservation.save()
+
+            # Enviar mensaje de WhatsApp
+            message = (
+                f"Hola {request.user.username}, tu reserva para '{space.name}' ha sido confirmada 🎉. \n"
+                f"Detalles de la reserva: \nInicio - {reservation.start_time.strftime('%d/%m/%Y %H:%M')} ⏰, \n"
+                f"Fin - {reservation.end_time.strftime('%d/%m/%Y %H:%M')} ⏰. \n"
+                f"Dirección: {space.location}."
+            )
+            send_whatsapp_message(userProfile.phone_number, message)
+            send_whatsapp_message_via_api(userProfile.phone_number, message)
+
+            return redirect("coworking_detail", pk=space.id)
+    else:
+        form = ReservationForm(user=request.user)
+    return render(
+        request, "reservation/create_reservation.html", {"form": form, "space": space}
+    )
+
+
+@login_required
+def my_reservations(request):
+    reservations = Reservation.objects.filter(user=request.user)
+    now = timezone.now().astimezone(timezone.get_current_timezone())
+    return render(
+        request,
+        "reservation/my_reservations.html",
+        {"reservations": reservations, "now": now},
+    )
+
+
+@login_required
+def cancel_reservation(request, reservation_id):
+    reservation = get_object_or_404(Reservation, id=reservation_id, user=request.user)
+    if reservation.start_time > timezone.now():
+        reservation.delete()
+    return redirect("my_reservations")
+
+
+@login_required
+def all_reservations(request):
+    reservations = Reservation.objects.all()
+    now = timezone.now().astimezone(timezone.get_current_timezone())
+    return render(
+        request,
+        "reservation/my_reservations.html",
+        {"reservations": reservations, "now": now},
+    )

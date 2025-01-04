@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .swiper-pagination-custom {
+        position: absolute;
+        bottom: 10px;
+        left: 0;
+        width: 100%;
+        text-align: center;
+        z-index: 10;
+    }
+</style>
+
+<div class="container mx-auto px-4 py-8">
+    <div class="bg-white p-6 rounded-lg shadow-lg">
+        <h1 class="text-4xl font-bold mb-4 text-center my-4 text-gray-800">{{ space.name }}</h1>
+        <!-- Carrusel de imágenes -->
+        <div class="swiper-container rounded-lg overflow-hidden mb-6 relative">
+            <div class="swiper-wrapper">
+                {% for image in space.images.all %}
+                <div class="swiper-slide">
+                    <img src="{{ image.image_url }}" alt="{{ space.name }}" class="w-full h-96 object-cover rounded-lg">
+                </div>
+                {% endfor %}
+            </div>
+            <!-- Añadir los botones de navegación -->
+            <div class="swiper-button-next"></div>
+            <div class="swiper-button-prev"></div>
+            <!-- Añadir la paginación -->
+            <div class="swiper-pagination swiper-pagination-custom"></div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <p class="text-gray-600 mb-4"><strong>Descripción:</strong> {{ space.description }}</p>
+                <p class="text-gray-600 mb-4"><strong>Ubicación:</strong> {{ space.location }}</p>
+                <p class="text-gray-600 mb-4"><strong>Capacidad:</strong> {{ space.capacity }} personas</p>
+                <p class="text-gray-600 mb-4"><strong>Precio por hora:</strong> ${{ space.price_per_hour }}</p>
+                <p class="text-gray-600 mb-4"><strong>Precio por día:</strong> ${{ space.price_per_day }}</p>
+                <p class="text-gray-600 mb-4"><strong>Precio por semana:</strong> ${{ space.price_per_week }}</p>
+                <p class="text-gray-600 mb-4"><strong>Precio por mes:</strong> ${{ space.price_per_month }}</p>
+            </div>
+            <div>
+                <p class="text-gray-600 mb-4"><strong>Servicios:</strong> {{ space.services|join:", " }}</p>
+                <p class="text-gray-600 mb-4"><strong>Comodidades:</strong> {{ space.amenities|join:", " }}</p>
+                <p class="text-gray-600 mb-4"><strong>Reglas:</strong> {{ space.rules }}</p>
+                <p class="text-gray-600 mb-4"><strong>Contacto:</strong> {{ space.contact_email }} / {{ space.contact_phone }}</p>
+                <p class="mt-4">
+                    <span class="inline-block px-3 py-1 rounded-full text-sm font-semibold {% if space.is_available %}bg-green-100 text-green-800{% else %}bg-red-100 text-red-800{% endif %}">
+                        {% if space.is_available %}
+                            Disponible
+                        {% else %}
+                            No disponible
+                        {% endif %}
+                    </span>
+                </p>
+            </div>
+        </div>
+
+        <div class="mt-8 flex flex-wrap gap-4 justify-center">
+            <div class="flex justify-end">
+                <a href="{% url 'create_reservation' space.id %}" class="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700">Reservar</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Inicializar Swiper.js -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        new Swiper('.swiper-container', {
+            loop: true,
+            navigation: {
+                nextEl: '.swiper-button-next',
+                prevEl: '.swiper-button-prev',
+            },
+            pagination: {
+                el: '.swiper-pagination-custom',
+                clickable: true,
+            },
+        });
+    });
+</script>
+{% endblock %}

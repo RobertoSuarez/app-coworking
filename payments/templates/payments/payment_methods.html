@@ -1,0 +1,35 @@
+<!-- filepath: /home/buffer/srcpy/appCoworking/payments/templates/payments/payment_methods.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold mb-8 text-center text-gray-800">Mis Métodos de Pago</h1>
+    <div class="bg-white p-6 rounded-lg shadow-lg">
+        <a href="{% url 'add_payment_method' %}" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Añadir Método de Pago</a>
+        <table class="min-w-full bg-white border border-gray-200 mt-4">
+            <thead>
+                <tr class="bg-gray-100">
+                    <th class="py-2 px-4 border-b">Tipo de Tarjeta</th>
+                    <th class="py-2 px-4 border-b">Número de Tarjeta</th>
+                    <th class="py-2 px-4 border-b">Nombre del Titular</th>
+                    <th class="py-2 px-4 border-b">Fecha de Expiración</th>
+                    <th class="py-2 px-4 border-b">Acción</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for method in methods %}
+                <tr>
+                    <td class="py-2 px-4 border-b">{{ method.get_card_type_display }}</td>
+                    <td class="py-2 px-4 border-b">**** **** **** {{ method.card_number|slice:"-4:" }}</td>
+                    <td class="py-2 px-4 border-b">{{ method.cardholder_name }}</td>
+                    <td class="py-2 px-4 border-b">{{ method.expiration_date }}</td>
+                    <td class="py-2 px-4 border-b">
+                        <a href="{% url 'edit_payment_method' method.id %}" class="bg-yellow-500 text-white px-4 py-2 rounded-md hover:bg-yellow-600">Editar</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

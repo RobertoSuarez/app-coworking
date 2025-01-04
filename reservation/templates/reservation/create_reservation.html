@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% load form_tags %}
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold mb-8 text-center text-gray-800">Reservar {{ space.name }}</h1>
+    <div class="bg-white p-6 rounded-lg shadow-lg">
+        <form method="post" class="max-w-lg mx-auto" id="reservation-form">
+            {% csrf_token %}
+            <div class="space-y-4">
+                <div>
+                    <label for="reservation_type" class="block text-gray-700 text-sm font-bold mb-2">Tipo de Reserva</label>
+                    {{ form.reservation_type|add_class:"shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" }}
+                </div>
+                <div>
+                    <label for="start_time" class="block text-gray-700 text-sm font-bold mb-2">Hora de Inicio</label>
+                    <input type="text" id="start_time" name="start_time" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" readonly>
+                </div>
+                <div>
+                    <label for="end_time" class="block text-gray-700 text-sm font-bold mb-2">Hora de Finalización</label>
+                    <input type="text" id="end_time" name="end_time" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" readonly>
+                </div>
+                <div>
+                    <label for="payment_method" class="block text-gray-700 text-sm font-bold mb-2">Método de Pago</label>
+                    {{ form.payment_method|add_class:"shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" }}
+                </div>
+                <div id="payment-card-container" style="display: none;">
+                    <label for="payment_card" class="block text-gray-700 text-sm font-bold mb-2">Tarjeta Registrada</label>
+                    {{ form.payment_card }}
+                </div>
+                <div>
+                    <label for="total_price" class="block text-gray-700 text-sm font-bold mb-2">Precio Total</label>
+                    <input type="text" id="total_price" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" readonly>
+                </div>
+            </div>
+            <div class="mt-4 flex justify-end space-x-4">
+                <a href="{% url 'coworking_detail' space.id %}" class="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700">Cancelar</a>
+                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Reservar</button>
+            </div>
+        </form>
+    </div>
+    <div id="calendar" class="mt-8"></div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'timeGridWeek',
+            locale: 'es',
+            selectable: true,
+            select: function(info) {
+                var startTime = info.startStr;
+                var endTime = info.endStr;
+                document.getElementById('start_time').value = startTime;
+                document.getElementById('end_time').value = endTime;
+                calculateTotalPrice();
+            }
+        });
+        calendar.render();
+
+        const form = document.getElementById('reservation-form');
+        const reservationType = form.querySelector('[name="reservation_type"]');
+        const startTime = form.querySelector('[name="start_time"]');
+        const endTime = form.querySelector('[name="end_time"]');
+        const paymentMethod = form.querySelector('[name="payment_method"]');
+        const paymentCardContainer = document.getElementById('payment-card-container');
+        const totalPriceField = document.getElementById('total_price');
+
+        function calculateTotalPrice() {
+            const start = new Date(startTime.value);
+            const end = new Date(endTime.value);
+            const duration = (end - start) / 1000; // duration in seconds
+
+            let price = 0;
+            if (reservationType.value === 'hour') {
+                const hours = duration / 3600;
+                price = hours * {{ space.price_per_hour }};
+            } else if (reservationType.value === 'day') {
+                const days = duration / 86400;
+                price = days * {{ space.price_per_day }};
+            } else if (reservationType.value === 'week') {
+                const weeks = duration / 604800;
+                price = weeks * {{ space.price_per_week }};
+            } else if (reservationType.value === 'month') {
+                const months = duration / 2592000;
+                price = months * {{ space.price_per_month }};
+            }
+
+            totalPriceField.value = `$${price.toFixed(2)}`;
+        }
+
+        reservationType.addEventListener('change', calculateTotalPrice);
+
+        paymentMethod.addEventListener('change', function() {
+            if (paymentMethod.value === 'credit_card') {
+                paymentCardContainer.style.display = 'block';
+            } else {
+                paymentCardContainer.style.display = 'none';
+            }
+        });
+    });
+</script>
+{% endblock %}

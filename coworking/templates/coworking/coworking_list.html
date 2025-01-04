@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+
+<header class="bg-white shadow-md p-4">
+    <div class="container mx-auto flex items-center justify-between">
+        <form method="GET" class="w-full lg:w-2/3 flex items-center bg-gray-100 rounded-lg shadow-sm">
+            <input 
+                type="text" 
+                name="search" 
+                placeholder="Buscar espacios..." 
+                value="{{ request.GET.search }}"
+                class="flex-grow px-4 py-3 bg-transparent border-none focus:outline-none rounded-l-lg"
+            >
+            <button 
+                type="submit" 
+                class="px-6 py-3 bg-blue-600 text-white rounded-r-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-400"
+            >
+                Buscar
+            </button>
+        </form>
+    </div>
+</header>
+
+<section class="py-8">
+    <div class="container mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {% for space in spaces %}
+        <div class="bg-white rounded-lg shadow hover:shadow-lg transition-shadow duration-300">
+            <!-- Carrusel de imágenes -->
+            <div class="swiper-container rounded-t-lg overflow-hidden">
+                <div class="swiper-wrapper">
+                    {% for image in space.images.all %}
+                    <div class="swiper-slide">
+                        <img src="{{ image.image_url }}" alt="{{ space.name }}" class="w-full h-48 object-cover">
+                    </div>
+                    {% endfor %}
+                </div>
+
+            </div>
+
+            <div class="p-4">
+                <h2 class="text-xl font-bold text-gray-800">{{ space.name }}</h2>
+                <p class="text-gray-600">Ubicación: {{ space.location }}</p>
+                <div class="flex items-center justify-between mt-4">
+                    <div class="text-lg font-bold text-blue-600">
+                        <p>Precio por hora: ${{ space.price_per_hour }}</p>
+                        <p>Precio por día: ${{ space.price_per_day }}</p>
+                    </div>
+                    <div class="flex space-x-2">
+                        <a href="{% url 'coworking_detail' space.pk %}" class="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700">Ver detalles</a>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const swiper = new Swiper('.swiper-container', {
+            loop: true,
+            navigation: {
+                nextEl: '.swiper-button-next',
+                prevEl: '.swiper-button-prev',
+            },
+            autoplay: {
+                delay: 5000,
+            },
+        });
+    });
+</script>
+{% endblock %}
