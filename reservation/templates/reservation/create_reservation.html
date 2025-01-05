@@ -7,34 +7,80 @@
         <form method="post" class="max-w-lg mx-auto" id="reservation-form">
             {% csrf_token %}
             <div class="space-y-4">
-                <div>
-                    <label for="reservation_type" class="block text-gray-700 text-sm font-bold mb-2">Tipo de Reserva</label>
-                    {{ form.reservation_type|add_class:"shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" }}
+                <!-- Stepper Navigation -->
+                <div class="flex justify-between mb-8">
+                    <div class="step flex flex-col items-center" id="step-1">
+                        <div class="step-number w-10 h-10 flex items-center justify-center rounded-full bg-blue-500 text-white font-bold mb-2">1</div>
+                        <div class="step-title text-gray-700">Tipo de Reserva</div>
+                    </div>
+                    <div class="step flex flex-col items-center" id="step-2">
+                        <div class="step-number w-10 h-10 flex items-center justify-center rounded-full bg-gray-300 text-gray-700 font-bold mb-2">2</div>
+                        <div class="step-title text-gray-700">Horario</div>
+                    </div>
+                    <div class="step flex flex-col items-center" id="step-3">
+                        <div class="step-number w-10 h-10 flex items-center justify-center rounded-full bg-gray-300 text-gray-700 font-bold mb-2">3</div>
+                        <div class="step-title text-gray-700">Método de Pago</div>
+                    </div>
+                    <div class="step flex flex-col items-center" id="step-4">
+                        <div class="step-number w-10 h-10 flex items-center justify-center rounded-full bg-gray-300 text-gray-700 font-bold mb-2">4</div>
+                        <div class="step-title text-gray-700">Confirmación</div>
+                    </div>
                 </div>
-                <div>
-                    <label for="start_time" class="block text-gray-700 text-sm font-bold mb-2">Hora de Inicio</label>
-                    <input type="text" id="start_time" name="start_time" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" readonly>
+
+                <!-- Step 1: Tipo de Reserva -->
+                <div class="step-content" id="step-content-1">
+                    <div>
+                        <label for="reservation_type" class="block text-gray-700 text-sm font-bold mb-2">Tipo de Reserva</label>
+                        {{ form.reservation_type|add_class:"shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" }}
+                    </div>
+                    <div class="mt-4 flex justify-end">
+                        <button type="button" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700" onclick="nextStep(2)">Siguiente</button>
+                    </div>
                 </div>
-                <div>
-                    <label for="end_time" class="block text-gray-700 text-sm font-bold mb-2">Hora de Finalización</label>
-                    <input type="text" id="end_time" name="end_time" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" readonly>
+
+                <!-- Step 2: Horario -->
+                <div class="step-content hidden" id="step-content-2">
+                    <div>
+                        <label for="start_time" class="block text-gray-700 text-sm font-bold mb-2">Hora de Inicio</label>
+                        <input type="text" id="start_time" name="start_time" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" readonly>
+                    </div>
+                    <div>
+                        <label for="end_time" class="block text-gray-700 text-sm font-bold mb-2">Hora de Finalización</label>
+                        <input type="text" id="end_time" name="end_time" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" readonly>
+                    </div>
+                    <div class="mt-4 flex justify-between">
+                        <button type="button" class="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700" onclick="prevStep(1)">Anterior</button>
+                        <button type="button" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700" onclick="nextStep(3)">Siguiente</button>
+                    </div>
                 </div>
-                <div>
-                    <label for="payment_method" class="block text-gray-700 text-sm font-bold mb-2">Método de Pago</label>
-                    {{ form.payment_method|add_class:"shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" }}
+
+                <!-- Step 3: Método de Pago -->
+                <div class="step-content hidden" id="step-content-3">
+                    <div>
+                        <label for="payment_method" class="block text-gray-700 text-sm font-bold mb-2">Método de Pago</label>
+                        {{ form.payment_method|add_class:"shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" }}
+                    </div>
+                    <div id="payment-card-container" style="display: none;">
+                        <label for="payment_card" class="block text-gray-700 text-sm font-bold mb-2">Tarjeta Registrada</label>
+                        {{ form.payment_card }}
+                    </div>
+                    <div class="mt-4 flex justify-between">
+                        <button type="button" class="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700" onclick="prevStep(2)">Anterior</button>
+                        <button type="button" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700" onclick="nextStep(4)">Siguiente</button>
+                    </div>
                 </div>
-                <div id="payment-card-container" style="display: none;">
-                    <label for="payment_card" class="block text-gray-700 text-sm font-bold mb-2">Tarjeta Registrada</label>
-                    {{ form.payment_card }}
+
+                <!-- Step 4: Confirmación -->
+                <div class="step-content hidden" id="step-content-4">
+                    <div>
+                        <label for="total_price" class="block text-gray-700 text-sm font-bold mb-2">Precio Total</label>
+                        <input type="text" id="total_price" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" readonly>
+                    </div>
+                    <div class="mt-4 flex justify-between">
+                        <button type="button" class="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700" onclick="prevStep(3)">Anterior</button>
+                        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Reservar</button>
+                    </div>
                 </div>
-                <div>
-                    <label for="total_price" class="block text-gray-700 text-sm font-bold mb-2">Precio Total</label>
-                    <input type="text" id="total_price" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" readonly>
-                </div>
-            </div>
-            <div class="mt-4 flex justify-end space-x-4">
-                <a href="{% url 'coworking_detail' space.id %}" class="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700">Cancelar</a>
-                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Reservar</button>
             </div>
         </form>
     </div>
@@ -42,6 +88,37 @@
 </div>
 
 <script>
+    function nextStep(step) {
+        document.querySelectorAll('.step-content').forEach(function(content) {
+            content.classList.add('hidden');
+        });
+        document.getElementById('step-content-' + step).classList.remove('hidden');
+        updateStepper(step);
+    }
+
+    function prevStep(step) {
+        document.querySelectorAll('.step-content').forEach(function(content) {
+            content.classList.add('hidden');
+        });
+        document.getElementById('step-content-' + step).classList.remove('hidden');
+        updateStepper(step);
+    }
+
+    function updateStepper(step) {
+        document.querySelectorAll('.step').forEach(function(stepElement, index) {
+            if (index < step - 1) {
+                stepElement.querySelector('.step-number').classList.add('bg-blue-500', 'text-white');
+                stepElement.querySelector('.step-number').classList.remove('bg-gray-300', 'text-gray-700');
+            } else if (index === step - 1) {
+                stepElement.querySelector('.step-number').classList.add('bg-blue-500', 'text-white');
+                stepElement.querySelector('.step-number').classList.remove('bg-gray-300', 'text-gray-700');
+            } else {
+                stepElement.querySelector('.step-number').classList.add('bg-gray-300', 'text-gray-700');
+                stepElement.querySelector('.step-number').classList.remove('bg-blue-500', 'text-white');
+            }
+        });
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
         var calendarEl = document.getElementById('calendar');
         var calendar = new FullCalendar.Calendar(calendarEl, {
@@ -98,6 +175,9 @@
                 paymentCardContainer.style.display = 'none';
             }
         });
+
+        // Initialize the first step
+        updateStepper(1);
     });
 </script>
 {% endblock %}
