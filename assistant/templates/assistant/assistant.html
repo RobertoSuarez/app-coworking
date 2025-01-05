@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold mb-8 text-center text-gray-800">Asistente AI</h1>
+    <div class="bg-white p-6 rounded-lg shadow-lg">
+        <div id="chat-box" class="mb-4 p-4 border border-gray-200 rounded-lg h-96 overflow-y-scroll flex flex-col">
+            <!-- Mensajes del chat -->
+        </div>
+        <form id="assistant-form" class="flex">
+            <input type="text" id="user-input" name="user_input" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Escribe tu mensaje...">
+            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 ml-2">Enviar</button>
+        </form>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+
+<script>
+    document.getElementById('assistant-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const userInput = document.getElementById('user-input').value;
+        const chatBox = document.getElementById('chat-box');
+
+        // Añadir el mensaje del usuario al chat
+        const userMessage = document.createElement('div');
+        userMessage.classList.add('mb-2', 'text-right', 'bg-blue-500', 'text-white', 'p-2', 'rounded-lg', 'inline-block', 'self-end');
+        userMessage.textContent = userInput;
+        chatBox.appendChild(userMessage);
+
+        // Enviar el mensaje al servidor
+        fetch("{% url 'assistant' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: new URLSearchParams({
+                'user_input': userInput
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Añadir la respuesta del asistente al chat
+            const assistantMessage = document.createElement('div');
+            assistantMessage.classList.add('mb-2', 'text-left', 'bg-gray-300', 'text-black', 'p-2', 'rounded-lg', 'inline-block', 'self-start');
+            assistantMessage.innerHTML = marked.parse(data.response);
+            chatBox.appendChild(assistantMessage);
+
+            // Limpiar el campo de entrada
+            document.getElementById('user-input').value = '';
+        });
+    });
+</script>
+{% endblock %}

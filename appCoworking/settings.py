@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     "landingPages",
     "payments",
     "assistant",
+    "rest_framework",
 ]
 
 MIDDLEWARE = [
@@ -142,3 +143,5 @@ WHATSAPP_ACCESS_TOKEN = "EAAPLWjPgv34BO19VIcd3CDwHYQhy8ZBsl0Df9IDw2FWwEppgEiPVZC
 TWILIO_ACCOUNT_SID = "ACfe2a2a42e62d03e698aa4c60d648cdaf"
 TWILIO_AUTH_TOKEN = "efa20e046733eb6480e07d940ffac96a"
 TWILIO_WHATSAPP_NUMBER = "whatsapp:+14155238886"  # Número de WhatsApp de Twilio
+
+OPENAI_API_KEY = config("OPENAI_API_KEY")
