@@ -19,7 +19,6 @@ class Reservation(models.Model):
         ("credit_card", "Tarjeta de Crédito/Débito"),
         ("cash", "Efectivo"),
         ("bank_transfer", "Transferencia Bancaria"),
-        ("other", "Otro"),
     ]
 
     user = models.ForeignKey(

@@ -85,7 +85,7 @@ def get_gpt_response(prompt: str, thread_id: str):
     run = client.beta.threads.runs.create(
         thread_id=thread_id,
         assistant_id=asistant_id,
-        instructions="Respond to user message",
+        instructions="Respond to user message, but do not engage in political, religious, or controversial topics. Stick to the topic of the application, which is the rental of coworking spaces.",
     )
 
     response = wait_for_run_completion(

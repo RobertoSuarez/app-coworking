@@ -8,6 +8,7 @@ from users.models import UserProfile
 from .models import Reservation
 from .forms import ReservationForm
 from .utils import send_whatsapp_message, send_whatsapp_message_via_api
+from django.http import JsonResponse
 
 
 @login_required
@@ -82,3 +83,18 @@ def all_reservations(request):
         "reservation/my_reservations.html",
         {"reservations": reservations, "now": now},
     )
+
+
+def get_reservations(request, space_id):
+    reservations = Reservation.objects.filter(space_id=space_id)
+    events = []
+    for reservation in reservations:
+        events.append(
+            {
+                "title": "Reservado",
+                "start": reservation.start_time.isoformat(),
+                "end": reservation.end_time.isoformat(),
+                "color": "#ff6961",  # pastel red
+            }
+        )
+    return JsonResponse(events, safe=False)
