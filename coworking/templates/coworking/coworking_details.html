@@ -58,6 +58,9 @@
             </div>
         </div>
 
+        <div id="map" style="height: 400px; width: 100%;"></div>
+
+
         <div class="mt-8 flex flex-wrap gap-4 justify-center">
             <div class="flex justify-end">
                 <a href="{% url 'create_reservation' space.id %}" class="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700">Reservar</a>
@@ -82,4 +85,25 @@
         });
     });
 </script>
+
+<script>
+    function initMap() {
+        var location = {
+            lat: {{ latitude|default:-1.025579513288314|floatformat:".2f" }},
+            lng: {{ longitude|default:-79.46859081714999|floatformat:".2f" }}
+        };
+        var map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 15,
+            center: location
+        });
+        var marker = new google.maps.Marker({
+            position: location,
+            map: map
+        });
+    }
+</script>
+<script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAjbFrx695v9oU776DpBxv1m0FR-r34cNo&callback=initMap">
+</script>
+
 {% endblock %}

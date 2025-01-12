@@ -17,6 +17,11 @@ def coworking_list(request):
     return render(request, "coworking/coworking_list.html", {"spaces": spaces})
 
 
-def coworking_detail(request, pk):
-    space = get_object_or_404(CoworkingSpace, pk=pk)
-    return render(request, "coworking/coworking_detail.html", {"space": space})
+def coworking_details(request, pk):
+    coworking_space = get_object_or_404(CoworkingSpace, pk=pk)
+    context = {
+        "space": coworking_space,
+        "latitude": coworking_space.latitude,
+        "longitude": coworking_space.longitude,
+    }
+    return render(request, "coworking/coworking_details.html", context)

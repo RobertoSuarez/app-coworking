@@ -42,6 +42,12 @@ class CoworkingSpace(models.Model):
         blank=True,
     )  # Propietario del espacio
     is_available = models.BooleanField(default=True)  # Disponibilidad del espacio
+    latitude = models.DecimalField(
+        max_digits=20, decimal_places=16, blank=True, null=True
+    )  # Latitud
+    longitude = models.DecimalField(
+        max_digits=20, decimal_places=16, blank=True, null=True
+    )  # Longitud
 
     def __str__(self):
         return self.name
