@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 
 
 class PaymentMethod(models.Model):
@@ -19,6 +20,12 @@ class PaymentMethod(models.Model):
     expiration_date = models.DateField()
     cvv = models.CharField(max_length=4)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def clean(self):
+        if not self.card_number.isdigit():
+            raise ValidationError(
+                "El número de la tarjeta solo puede contener dígitos."
+            )
 
     def __str__(self):
         return f"{self.card_type} - {self.card_number[-4:]}"

@@ -63,6 +63,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "appCoworking.context_processors.user_profile",  # Añadir aquí
             ],
         },
     },
@@ -138,7 +139,7 @@ LOGOUT_REDIRECT_URL = "login"
 
 WHATSAPP_API_URL = "https://graph.facebook.com/v21.0"
 WHATSAPP_PHONE_NUMBER_ID = "451733811349605"
-WHATSAPP_ACCESS_TOKEN = "EAAPLWjPgv34BO47LSCYbkS3fRV31MNrNyl3vEuve43uZBZCBxjZBUZA1dtzHfFZBRGgYdSrepLTbECIPMMyjDZAfMuJCN5UFgSYAKSSLyMiyLdyWgqjQCjq07xgjfBnT7706ogw7sb7urb0XIGJnBLauYonTZB99TBN5afdQRx84yJqONYAxj7ZCQQULsEZCoDRmWps3Pwuv20UecZBoxQepnrwYbvsZBgZD"
+WHATSAPP_ACCESS_TOKEN = "EAAPLWjPgv34BO6dCXuqHuomeC74dwCdGx2ZB3xljSOWkDpiSPZB4erI6aUALuNZB82lZCD7YlAIhjPTI45dpLbUqZA5tDTUOGZBbFd6UVTAaaV9RZCceHRHcoNPFZBBNr4VRGsm1uC6B0mYBStxpHZCZAqyoKh4DMOZCUZC2v6V98KEwF0543wsKd3SrCVw3TiG6fPSaVREhmFZCmVjlLujZA21ZBTS4lo0SOQZD"
 
 TWILIO_ACCOUNT_SID = "ACfe2a2a42e62d03e698aa4c60d648cdaf"
 TWILIO_AUTH_TOKEN = "efa20e046733eb6480e07d940ffac96a"
