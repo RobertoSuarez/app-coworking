@@ -47,83 +47,106 @@
 
         Vue.component('chat-widget', {
             template: `
-                <div id="chat-container" class="fixed bottom-0 right-0 m-4 w-96 bg-white shadow-lg rounded-lg z-50">
-                    <div class="p-4 border-b flex justify-between cursor-pointer" @click="toggleChat">
-                        <h2 class="text-lg font-bold">Asistente AI</h2>
-                        <button class="text-gray-500 hover:text-black">
-                            <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-brand-github-copilot"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 18v-5.5c0 -.667 .167 -1.333 .5 -2" /><path d="M12 7.5c0 -1 -.01 -4.07 -4 -3.5c-3.5 .5 -4 2.5 -4 3.5c0 1.5 0 4 3 4c4 0 5 -2.5 5 -4z" /><path d="M4 12c-1.333 .667 -2 1.333 -2 2c0 1 0 3 1.5 4c3 2 6.5 3 8.5 3s5.499 -1 8.5 -3c1.5 -1 1.5 -3 1.5 -4c0 -.667 -.667 -1.333 -2 -2" /><path d="M20 18v-5.5c0 -.667 -.167 -1.333 -.5 -2" /><path d="M12 7.5l0 -.297l.01 -.269l.027 -.298l.013 -.105l.033 -.215c.014 -.073 .029 -.146 .046 -.22l.06 -.223c.336 -1.118 1.262 -2.237 3.808 -1.873c2.838 .405 3.703 1.797 3.93 2.842l.036 .204c0 .033 .01 .066 .013 .098l.016 .185l0 .171l0 .49l-.015 .394l-.02 .271c-.122 1.366 -.655 2.845 -2.962 2.845c-3.256 0 -4.524 -1.656 -4.883 -3.081l-.053 -.242a3.865 3.865 0 0 1 -.036 -.235l-.021 -.227a3.518 3.518 0 0 1 -.007 -.215z" /><path d="M10 15v2" /><path d="M14 15v2" /></svg>
-                        </button>
+            <div>
+                <div v-if="!isChatOpen" class="fixed border border-2 border-black bottom-0 right-0 m-4 w-16 h-16 bg-white rounded-full shadow-lg flex items-center justify-center cursor-pointer z-50" @click="toggleChat">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-brand-github-copilot">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                    <path d="M4 18v-5.5c0 -.667 .167 -1.333 .5 -2" />
+                    <path d="M12 7.5c0 -1 -.01 -4.07 -4 -3.5c-3.5 .5 -4 2.5 -4 3.5c0 1.5 0 4 3 4c4 0 5 -2.5 5 -4z" />
+                    <path d="M4 12c-1.333 .667 -2 1.333 -2 2c0 1 0 3 1.5 4c3 2 6.5 3 8.5 3s5.499 -1 8.5 -3c1.5 -1 1.5 -3 1.5 -4c0 -.667 -.667 -1.333 -2 -2" />
+                    <path d="M20 18v-5.5c0 -.667 -.167 -1.333 -.5 -2" />
+                    <path d="M12 7.5l0 -.297l.01 -.269l.027 -.298l.013 -.105l.033 -.215c.014 -.073 .029 -.146 .046 -.22l.06 -.223c.336 -1.118 1.262 -2.237 3.808 -1.873c2.838 .405 3.703 1.797 3.93 2.842l.036 .204c0 .033 .01 .066 .013 .098l.016 .185l0 .171l0 .49l-.015 .394l-.02 .271c-.122 1.366 -.655 2.845 -2.962 2.845c-3.256 0 -4.524 -1.656 -4.883 -3.081l-.053 -.242a3.865 3.865 0 0 1 -.036 -.235l-.021 -.227a3.518 3.518 0 0 1 -.007 -.215z" />
+                    <path d="M10 15v2" />
+                    <path d="M14 15v2" />
+                </svg>
+                </div>
+                <div v-if="isChatOpen" id="chat-container" class="fixed bottom-0 right-0 m-4 w-96 bg-white shadow-lg rounded-lg z-50">
+                <div class="p-4 border-b flex justify-between cursor-pointer" @click="toggleChat">
+                    <h2 class="text-lg font-bold">Asistente AI</h2>
+                    <button class="text-gray-500 hover:text-black">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-brand-github-copilot">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M4 18v-5.5c0 -.667 .167 -1.333 .5 -2" />
+                        <path d="M12 7.5c0 -1 -.01 -4.07 -4 -3.5c-3.5 .5 -4 2.5 -4 3.5c0 1.5 0 4 3 4c4 0 5 -2.5 5 -4z" />
+                        <path d="M4 12c-1.333 .667 -2 1.333 -2 2c0 1 0 3 1.5 4c3 2 6.5 3 8.5 3s5.499 -1 8.5 -3c1.5 -1 1.5 -3 1.5 -4c0 -.667 -.667 -1.333 -2 -2" />
+                        <path d="M20 18v-5.5c0 -.667 -.167 -1.333 -.5 -2" />
+                        <path d="M12 7.5l0 -.297l.01 -.269l.027 -.298l.013 -.105l.033 -.215c.014 -.073 .029 -.146 .046 -.22l.06 -.223c.336 -1.118 1.262 -2.237 3.808 -1.873c2.838 .405 3.703 1.797 3.93 2.842l.036 .204c0 .033 .01 .066 .013 .098l.016 .185l0 .171l0 .49l-.015 .394l-.02 .271c-.122 1.366 -.655 2.845 -2.962 2.845c-3.256 0 -4.524 -1.656 -4.883 -3.081l-.053 -.242a3.865 3.865 0 0 1 -.036 -.235l-.021 -.227a3.518 3.518 0 0 1 -.007 -.215z" />
+                        <path d="M10 15v2" />
+                        <path d="M14 15v2" />
+                    </svg>
+                    </button>
+                </div>
+                <div v-if="isChatOpen" class="p-4 h-96 overflow-y-scroll" ref="chatBox">
+                    <div v-for="message in messages" :key="message.id" :class="{'text-right': message.user, 'text-left': !message.user}">
+                    <div :class="{'bg-blue-500 text-white': message.user, 'bg-gray-300 text-black': !message.user}" class="mb-2 p-2 rounded-lg inline-block">
+                        <span v-html="message.text"></span>
                     </div>
-                    <div v-if="isChatOpen" class="p-4 h-96 overflow-y-scroll" ref="chatBox">
-                        <div v-for="message in messages" :key="message.id" :class="{'text-right': message.user, 'text-left': !message.user}">
-                            <div :class="{'bg-blue-500 text-white': message.user, 'bg-gray-300 text-black': !message.user}" class="mb-2 p-2 rounded-lg inline-block">
-                                <span v-html="message.text"></span>
-                            </div>
-                        </div>
-                        <div v-if="isLoading" class="flex justify-center mt-4">
-                            <div class="spinner border-t-2 border-blue-500 rounded-full w-6 h-6 animate-spin"></div>
-                        </div>
                     </div>
-                    <div v-if="isChatOpen" class="p-4 border-t">
-                        <input v-model="userInput" @keyup.enter="sendMessage" type="text" class="w-full p-2 border rounded-lg" placeholder="Escribe tu mensaje...">
+                    <div v-if="isLoading" class="flex justify-center mt-4">
+                    <div class="spinner border-t-2 border-blue-500 rounded-full w-6 h-6 animate-spin"></div>
                     </div>
                 </div>
+                <div v-if="isChatOpen" class="p-4 border-t">
+                    <input v-model="userInput" @keyup.enter="sendMessage" type="text" class="w-full p-2 border rounded-lg" placeholder="Escribe tu mensaje...">
+                </div>
+                </div>
+            </div>
             `,
             data() {
-                return {
-                    isChatOpen: false,
-                    userInput: '',
-                    messages: [
-                        { id: 1, text: 'Hola, ¿en que te puedo ayudar?', user: false },
-                    ],
-                    threadId: localStorage.getItem('thread_id') || null,
-                    isLoading: false,
-                };
+            return {
+                isChatOpen: false,
+                userInput: '',
+                messages: [
+                { id: 1, text: 'Hola, ¿en que te puedo ayudar?', user: false },
+                ],
+                threadId: localStorage.getItem('thread_id') || null,
+                isLoading: false,
+            };
             },
             methods: {
-                toggleChat() {
-                    this.isChatOpen = !this.isChatOpen;
-                },
-                async createThread() {
-                    const response = await axios.post('{% url "create_thread" %}', {}, {
-                        headers: {
-                            'X-CSRFToken': csrftoken
-                        }
-                    });
-                    this.threadId = response.data.thread_id[0][1];
-                    localStorage.setItem('thread_id', this.threadId);
-                },
-                async sendMessage() {
-                    if (!this.threadId) {
-                        await this.createThread();
-                    }
-                    const userMessage = { id: Date.now(), text: this.userInput, user: true };
-                    this.messages.push(userMessage);
-                    this.userInput = '';
-                    this.isLoading = true;
-                    this.$nextTick(() => {
-                        this.$refs.chatBox.scrollTop = this.$refs.chatBox.scrollHeight;
-                    });
-                    const response = await axios.post('{% url "chat_send_message" %}', {
-                        thread_id: this.threadId,
-                        user_input: userMessage.text,
-                    }, {
-                        headers: {
-                            'X-CSRFToken': csrftoken
-                        }
-                    });
-                    const assistantMessage = { id: Date.now(), text: marked.parse(response.data.response), user: false };
-                    this.messages.push(assistantMessage);
-                    this.isLoading = false;
-                    this.$nextTick(() => {
-                        this.$refs.chatBox.scrollTop = this.$refs.chatBox.scrollHeight;
-                    });
-                },
+            toggleChat() {
+                this.isChatOpen = !this.isChatOpen;
+            },
+            async createThread() {
+                const response = await axios.post('{% url "create_thread" %}', {}, {
+                headers: {
+                    'X-CSRFToken': csrftoken
+                }
+                });
+                this.threadId = response.data.thread_id[0][1];
+                localStorage.setItem('thread_id', this.threadId);
+            },
+            async sendMessage() {
+                if (!this.threadId) {
+                await this.createThread();
+                }
+                const userMessage = { id: Date.now(), text: this.userInput, user: true };
+                this.messages.push(userMessage);
+                this.userInput = '';
+                this.isLoading = true;
+                this.$nextTick(() => {
+                this.$refs.chatBox.scrollTop = this.$refs.chatBox.scrollHeight;
+                });
+                const response = await axios.post('{% url "chat_send_message" %}', {
+                thread_id: this.threadId,
+                user_input: userMessage.text,
+                }, {
+                headers: {
+                    'X-CSRFToken': csrftoken
+                }
+                });
+                const assistantMessage = { id: Date.now(), text: marked.parse(response.data.response), user: false };
+                this.messages.push(assistantMessage);
+                this.isLoading = false;
+                this.$nextTick(() => {
+                this.$refs.chatBox.scrollTop = this.$refs.chatBox.scrollHeight;
+                });
+            },
             },
             mounted() {
-                if (!this.threadId) {
-                    this.createThread();
-                }
+            if (!this.threadId) {
+                this.createThread();
+            }
             },
         });
 
