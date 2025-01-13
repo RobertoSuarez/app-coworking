@@ -57,13 +57,10 @@ def create_reservation(request, space_id):
 
 @login_required
 def my_reservations(request):
-    reservations = Reservation.objects.filter(user=request.user)
     now = timezone.now().astimezone(timezone.get_current_timezone())
-    return render(
-        request,
-        "reservation/my_reservations.html",
-        {"reservations": reservations, "now": now},
-    )
+    reservations = Reservation.objects.filter(user=request.user).order_by("-created_at")
+    context = {"reservations": reservations, "now": now}
+    return render(request, "reservation/my_reservations.html", context)
 
 
 @login_required
@@ -76,13 +73,23 @@ def cancel_reservation(request, reservation_id):
 
 @login_required
 def all_reservations(request):
-    reservations = Reservation.objects.all()
+    coworking_space_id = request.GET.get("coworking_space")
+    if coworking_space_id:
+        reservations = Reservation.objects.filter(space_id=coworking_space_id).order_by(
+            "-created_at"
+        )
+    else:
+        reservations = Reservation.objects.all().order_by("-created_at")
+
     now = timezone.now().astimezone(timezone.get_current_timezone())
-    return render(
-        request,
-        "reservation/my_reservations.html",
-        {"reservations": reservations, "now": now},
-    )
+    coworking_spaces = CoworkingSpace.objects.all()
+
+    context = {
+        "reservations": reservations,
+        "coworking_spaces": coworking_spaces,
+        "now": now,
+    }
+    return render(request, "reservation/all_reservation_admin.html", context)
 
 
 def get_reservations(request, space_id):
@@ -98,3 +105,21 @@ def get_reservations(request, space_id):
             }
         )
     return JsonResponse(events, safe=False)
+
+
+def all_reservations_admin(request):
+    coworking_space_id = request.GET.get("coworking_space")
+    if coworking_space_id:
+        reservations = Reservation.objects.filter(space_id=coworking_space_id).order_by(
+            "-created_at"
+        )
+    else:
+        reservations = Reservation.objects.all().order_by("-created_at")
+
+    coworking_spaces = CoworkingSpace.objects.all()
+
+    context = {
+        "reservations": reservations,
+        "coworking_spaces": coworking_spaces,
+    }
+    return render(request, "reservation/all_reservation_admin.html", context)
