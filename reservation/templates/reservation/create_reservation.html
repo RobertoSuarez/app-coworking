@@ -2,223 +2,259 @@
 {% load form_tags %}
 {% block content %}
 <div class="container mx-auto px-4 py-8">
-    <h1 class="text-3xl font-bold mb-8 text-center text-gray-800">Reservar {{ space.name }}</h1>
-    <div class="bg-white p-6 rounded-lg shadow-lg">
-        <form method="post" class="mx-auto" id="reservation-form">
-            {% csrf_token %}
-            <div class="mb-4 hidden">
-                <label for="reservation_type" class="block text-gray-700 text-sm font-bold mb-2">Tipo de Reserva</label>
-                <select id="reservation_type" name="reservation_type" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-                    <option value="hour">Por Hora</option>
-                    <option value="day">Por Día</option>
-                </select>
-            </div>
-            <div class="mb-4">
-                <label for="price_info" class="block text-gray-700 text-sm font-bold mb-2">Precio</label>
-                <div id="price_info" class="text-lg font-semibold text-gray-800"></div>
-                <div id="type_reservation" class="text-lg font-semibold text-gray-800"></div>
-            </div>
-            <div class="space-y-4">
-                <!-- Stepper Navigation -->
-                <div class="flex justify-between mb-8">
-                    <div class="step flex flex-col items-center" id="step-1">
-                        <div class="step-number w-10 h-10 flex items-center justify-center rounded-full bg-blue-500 text-white font-bold mb-2">1</div>
-                        <div class="step-title text-gray-700">Horario</div>
-                    </div>
-                    <div class="step flex flex-col items-center" id="step-2">
-                        <div class="step-number w-10 h-10 flex items-center justify-center rounded-full bg-gray-300 text-gray-700 font-bold mb-2">2</div>
-                        <div class="step-title text-gray-700">Método de Pago</div>
-                    </div>
-                    <div class="step flex flex-col items-center" id="step-3">
-                        <div class="step-number w-10 h-10 flex items-center justify-center rounded-full bg-gray-300 text-gray-700 font-bold mb-2">3</div>
-                        <div class="step-title text-gray-700">Confirmación</div>
-                    </div>
-                </div>
+  <h1 class="text-3xl font-bold mb-8 text-center text-gray-800">Reservar {{ space.name }}</h1>
+  <div class="bg-white p-6 rounded-lg border">
+    <form method="post" class="mx-auto" id="reservation-form">
+      {% csrf_token %}
+      <div class="mb-4 hidden">
+        <label for="reservation_type" class="block text-gray-700 text-sm font-bold mb-2">Tipo de Reserva</label>
+        <select id="reservation_type" name="reservation_type" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+          <option value="hour">Por Hora</option>
+          <option value="day">Por Día</option>
+        </select>
+      </div>
+      <div class="mb-4">
+        <label for="price_info" class="block text-gray-700 text-sm font-bold mb-2">Precio</label>
+        <div id="price_info" class="text-lg font-semibold text-gray-800"></div>
+        <div id="type_reservation" class="text-lg font-semibold text-gray-800"></div>
+        <!-- Elemento para mostrar la alerta -->
+        <div id="price_alert" class="text-red-600 text-sm mt-2" style="display: none;"></div>
+      </div>
+      <div class="space-y-4">
+        <!-- Stepper Navigation -->
+        <div class="flex justify-between mb-8">
+          <div class="step flex flex-col items-center" id="step-1">
+            <div class="step-number w-10 h-10 flex items-center justify-center rounded-full bg-blue-500 text-white font-bold mb-2">1</div>
+            <div class="step-title text-gray-700">Horario</div>
+          </div>
+          <div class="step flex flex-col items-center" id="step-2">
+            <div class="step-number w-10 h-10 flex items-center justify-center rounded-full bg-gray-300 text-gray-700 font-bold mb-2">2</div>
+            <div class="step-title text-gray-700">Método de Pago</div>
+          </div>
+          <div class="step flex flex-col items-center" id="step-3">
+            <div class="step-number w-10 h-10 flex items-center justify-center rounded-full bg-gray-300 text-gray-700 font-bold mb-2">3</div>
+            <div class="step-title text-gray-700">Confirmación</div>
+          </div>
+        </div>
 
-                <!-- Step 1: Horario -->
-                <div class="step-content" id="step-content-1">
-                    <div class="mb-4 hidden">
-                        <label for="start_time" class="block text-gray-700 text-sm font-bold mb-2">Hora de Inicio</label>
-                        <input type="text" id="start_time" name="start_time" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" readonly>
-                    </div>
-                    <div class="mb-4 hidden">
-                        <label for="end_time" class="block text-gray-700 text-sm font-bold mb-2">Hora de Finalización</label>
-                        <input type="text" id="end_time" name="end_time" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" readonly>
-                    </div>
-                    <div id="calendar" class="mt-4 h-[800px]"></div>
-                    <div class="mt-4 flex justify-between">
-                        <button type="button" class="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700" onclick="prevStep(1)">Anterior</button>
-                        <button type="button" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700" onclick="nextStep(2)">Siguiente</button>
-                    </div>
-                </div>
+        <!-- Step 1: Horario -->
+        <div class="step-content" id="step-content-1">
+          <div class="mb-4 hidden">
+            <label for="start_time" class="block text-gray-700 text-sm font-bold mb-2">Hora de Inicio</label>
+            <input type="text" id="start_time" name="start_time" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" readonly>
+          </div>
+          <div class="mb-4 hidden">
+            <label for="end_time" class="block text-gray-700 text-sm font-bold mb-2">Hora de Finalización</label>
+            <input type="text" id="end_time" name="end_time" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" readonly>
+          </div>
+          <!-- Contenedor del calendario sin sombra y con borde redondeado -->
+          <div id="calendar" class="mt-4 h-[800px] border border-gray-300 rounded-lg"></div>
+          <div class="mt-4 flex justify-between">
+            <button type="button" class="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700" onclick="prevStep(1)">Anterior</button>
+            <button type="button" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700" onclick="nextStep(2)">Siguiente</button>
+          </div>
+        </div>
 
-                <!-- Step 2: Método de Pago -->
-                <div class="step-content hidden" id="step-content-2">
-                    <div>
-                        <label for="payment_method" class="block text-gray-700 text-sm font-bold mb-2">Método de Pago</label>
-                        {{ form.payment_method|add_class:"shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" }}
-                    </div>
-                    <div id="payment-card-container" style="display: none;">
-                        <label for="payment_card" class="block text-gray-700 text-sm font-bold mb-2">Tarjeta Registrada</label>
-                        {{ form.payment_card }}
-                    </div>
-                    <div class="mt-4 flex justify-between">
-                        <button type="button" class="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700" onclick="prevStep(1)">Anterior</button>
-                        <button type="button" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700" onclick="nextStep(3)">Siguiente</button>
-                    </div>
-                </div>
+        <!-- Step 2: Método de Pago -->
+        <div class="step-content hidden" id="step-content-2">
+          <div>
+            <label for="payment_method" class="block text-gray-700 text-sm font-bold mb-2">Método de Pago</label>
+            {{ form.payment_method|add_class:"shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" }}
+          </div>
+          <div id="payment-card-container" style="display: none;">
+            <label for="payment_card" class="block text-gray-700 text-sm font-bold mb-2">Tarjeta Registrada</label>
+            {{ form.payment_card }}
+          </div>
+          <div class="mt-4 flex justify-between">
+            <button type="button" class="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700" onclick="prevStep(1)">Anterior</button>
+            <button type="button" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700" onclick="nextStep(3)">Siguiente</button>
+          </div>
+        </div>
 
-                <!-- Step 3: Confirmación -->
-                <div class="step-content hidden" id="step-content-3">
-                    <div class="mb-4">
-                        <label for="summary_start_time" class="block text-gray-700 text-sm font-bold mb-2">Hora de Inicio</label>
-                        <div id="summary_start_time" class="text-lg font-semibold text-gray-800"></div>
-                    </div>
-                    <div class="mb-4">
-                        <label for="summary_end_time" class="block text-gray-700 text-sm font-bold mb-2">Hora de Finalización</label>
-                        <div id="summary_end_time" class="text-lg font-semibold text-gray-800"></div>
-                    </div>
-                    <div class="mb-4">
-                        <label for="summary_reservation_type" class="block text-gray-700 text-sm font-bold mb-2">Tipo de Reserva</label>
-                        <div id="summary_reservation_type" class="text-lg font-semibold text-gray-800"></div>
-                    </div>
-                    <div class="mb-4">
-                        <label for="summary_price" class="block text-gray-700 text-sm font-bold mb-2">Precio Total</label>
-                        <div id="summary_price" class="text-lg font-semibold text-gray-800"></div>
-                    </div>
-                    <div class="mb-4 text-center text-gray-700">
-                        Su reserva será confirmada vía WhatsApp. Confirme los datos y presione continuar.
-                    </div>
-                    <div class="mt-4 flex justify-between">
-                        <button type="button" class="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700" onclick="prevStep(2)">Anterior</button>
-                        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Continuar</button>
-                    </div>
-                </div>
+        <!-- Step 3: Confirmación -->
+        <div class="step-content hidden" id="step-content-3">
+          <h2 class="text-2xl font-bold text-gray-800 mb-4">Confirmación de Reserva</h2>
+          <div class="bg-gray-100 p-4 rounded-lg shadow">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <p class="text-sm font-semibold text-gray-600">Hora de Inicio:</p>
+                <p id="summary_start_time" class="text-lg font-bold text-gray-800"></p>
+              </div>
+              <div>
+                <p class="text-sm font-semibold text-gray-600">Hora de Finalización:</p>
+                <p id="summary_end_time" class="text-lg font-bold text-gray-800"></p>
+              </div>
+              <div>
+                <p class="text-sm font-semibold text-gray-600">Tipo de Reserva:</p>
+                <p id="summary_reservation_type" class="text-lg font-bold text-gray-800"></p>
+              </div>
+              <div>
+                <p class="text-sm font-semibold text-gray-600">Precio Total:</p>
+                <p id="summary_price" class="text-lg font-bold text-gray-800"></p>
+              </div>
+              <div>
+                <p class="text-sm font-semibold text-gray-600">Método de Pago:</p>
+                <p id="summary_payment_method" class="text-lg font-bold text-gray-800"></p>
+              </div>
             </div>
-        </form>
-    </div>
+          </div>
+          <p class="mt-4 text-center text-gray-700">
+            El contrato de alquiler del coworking se enviará a su correo electrónico. Revise los datos y presione continuar.
+          </p>
+          <div class="mt-4 flex justify-between">
+            <button type="button" class="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700" onclick="prevStep(2)">Anterior</button>
+            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Continuar</button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
 </div>
 
 <!-- Incluir FullCalendar -->
 <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.css' rel='stylesheet' />
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.js'></script>
+<!-- Incluir locales para FullCalendar -->
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/locales-all.min.js'></script>
 
 <script>
-    var calendar;
-    var selectedEvent;
+  var calendar;
+  var selectedEvent;
 
-    function nextStep(step) {
-        document.querySelectorAll('.step-content').forEach(function(content) {
-            content.classList.add('hidden');
-        });
-        document.getElementById('step-content-' + step).classList.remove('hidden');
-        updateStepper(step);
-
-        if (step === 3) {
-            // Update summary information
-            var startTime = new Date(document.getElementById('start_time').value);
-            var endTime = new Date(document.getElementById('end_time').value);
-            document.getElementById('summary_start_time').innerText = `${startTime.getDate()}/${startTime.getMonth() + 1}/${startTime.getFullYear()} ${startTime.getHours() < 10 ? '0' + startTime.getHours() : startTime.getHours()}:${startTime.getMinutes() < 10 ? '0' + startTime.getMinutes() : startTime.getMinutes()}`;
-            document.getElementById('summary_end_time').innerText = `${endTime.getDate()}/${endTime.getMonth() + 1}/${endTime.getFullYear()} ${endTime.getHours() < 10 ? '0' + endTime.getHours() : endTime.getHours()}:${endTime.getMinutes() < 10 ? '0' + endTime.getMinutes() : endTime.getMinutes()}`;
-            document.getElementById('summary_reservation_type').innerText = document.getElementById('reservation_type').value === 'hour' ? 'Por Hora' : 'Por Día';
-            document.getElementById('summary_price').innerText = document.getElementById('price_info').innerText;
-            var paymentMethod = document.querySelector('[name="payment_method"]:checked');
-            if (paymentMethod) {
-                document.getElementById('summary_payment_method').innerText = paymentMethod.nextSibling.textContent.trim();
-            }
-        }
-    }
-
-    function prevStep(step) {
-        document.querySelectorAll('.step-content').forEach(function(content) {
-            content.classList.add('hidden');
-        });
-        document.getElementById('step-content-' + step).classList.remove('hidden');
-        updateStepper(step);
-    }
-
-    function updateStepper(step) {
-        document.querySelectorAll('.step').forEach(function(stepElement, index) {
-            if (index < step - 1) {
-                stepElement.querySelector('.step-number').classList.add('bg-blue-500', 'text-white');
-                stepElement.querySelector('.step-number').classList.remove('bg-gray-300', 'text-gray-700');
-            } else if (index === step - 1) {
-                stepElement.querySelector('.step-number').classList.add('bg-blue-500', 'text-white');
-                stepElement.querySelector('.step-number').classList.remove('bg-gray-300', 'text-gray-700');
-            } else {
-                stepElement.querySelector('.step-number').classList.add('bg-gray-300', 'text-gray-700');
-                stepElement.querySelector('.step-number').classList.remove('bg-blue-500', 'text-white');
-            }
-        });
-    }
-
-    document.addEventListener('DOMContentLoaded', function() {
-        var paymentMethod = document.querySelector('[name="payment_method"]');
-        var paymentCardContainer = document.getElementById('payment-card-container');
-
-        paymentMethod.addEventListener('change', function() {
-            if (paymentMethod.value === 'credit_card') {
-                paymentCardContainer.style.display = 'block';
-            } else {
-                paymentCardContainer.style.display = 'none';
-            }
-        });
-
-        // Initialize FullCalendar
-        var calendarEl = document.getElementById('calendar');
-        calendar = new FullCalendar.Calendar(calendarEl, {
-            initialView: 'timeGridWeek',
-            locale: 'es',
-            selectable: true,
-            select: function(info) {
-                var startTime = info.startStr;
-                var endTime = info.endStr;
-                document.getElementById('start_time').value = startTime;
-                document.getElementById('end_time').value = endTime;
-
-                // Deduce reservation type
-                var start = new Date(startTime);
-                var end = new Date(endTime);
-                var duration = (end - start) / (1000 * 60 * 60); // duration in hours
-
-                var reservationType = 'hour';
-                var price = duration * {{ space.price_per_hour|floatformat:".2f" }};
-                if (duration >= 24) {
-                    reservationType = 'day';
-                    price = Math.ceil(duration / 24) * {{ space.price_per_day|floatformat:".2f" }};
-                }
-
-                document.getElementById('reservation_type').value = reservationType;
-
-                // Actualizamos el tipo de reservacion y el precio.
-                document.getElementById('price_info').innerText = `Precio: $${price.toFixed(2)}`;
-                document.getElementById('type_reservation').innerText =  `Tipo de reservacion: ${reservationType === 'hour' ? 'Por Hora' : 'Por Día'}`;
-
-                // Remove previous selection
-                if (selectedEvent) {
-                    calendar.getEventById('selected').remove();
-                }
-
-                // Add new selection
-                selectedEvent = calendar.addEvent({
-                    id: 'selected',
-                    start: startTime,
-                    end: endTime,
-                    color: 'blue'
-                });
-            },
-            events: function(fetchInfo, successCallback, failureCallback) {
-                fetch(`/reservation/api/reservations/{{ space.id }}/`)
-                    .then(response => response.json())
-                    .then(events => successCallback(events))
-                    .catch(error => failureCallback(error));
-            }
-        });
-
-        calendar.render();
-
-        // Initialize the first step
-        updateStepper(1);
+  function nextStep(step) {
+    document.querySelectorAll('.step-content').forEach(function(content) {
+      content.classList.add('hidden');
     });
+    document.getElementById('step-content-' + step).classList.remove('hidden');
+    updateStepper(step);
+
+    if (step === 3) {
+      // Actualizar información de resumen
+      var startTimeVal = document.getElementById('start_time').value;
+      var endTimeVal = document.getElementById('end_time').value;
+      if(startTimeVal && endTimeVal) {
+        var startTime = new Date(startTimeVal);
+        var endTime = new Date(endTimeVal);
+        document.getElementById('summary_start_time').innerText =
+          `${startTime.getDate()}/${startTime.getMonth()+1}/${startTime.getFullYear()} ${startTime.getHours()<10 ? '0'+startTime.getHours() : startTime.getHours()}:${startTime.getMinutes()<10 ? '0'+startTime.getMinutes() : startTime.getMinutes()}`;
+        document.getElementById('summary_end_time').innerText =
+          `${endTime.getDate()}/${endTime.getMonth()+1}/${endTime.getFullYear()} ${endTime.getHours()<10 ? '0'+endTime.getHours() : endTime.getHours()}:${endTime.getMinutes()<10 ? '0'+endTime.getMinutes() : endTime.getMinutes()}`;
+      }
+      document.getElementById('summary_reservation_type').innerText =
+        document.getElementById('reservation_type').value === 'hour' ? 'Por Hora' : 'Por Día';
+      document.getElementById('summary_price').innerText =
+        document.getElementById('price_info').innerText;
+      
+      // Actualización del método de pago:
+      var paymentMethodSelect = document.querySelector('[name="payment_method"]');
+      if (paymentMethodSelect) {
+        var selectedOption = paymentMethodSelect.options[paymentMethodSelect.selectedIndex].text;
+        document.getElementById('summary_payment_method').innerText = selectedOption;
+      }
+    }
+  }
+
+  function prevStep(step) {
+    document.querySelectorAll('.step-content').forEach(function(content) {
+      content.classList.add('hidden');
+    });
+    document.getElementById('step-content-' + step).classList.remove('hidden');
+    updateStepper(step);
+  }
+
+  function updateStepper(step) {
+    document.querySelectorAll('.step').forEach(function(stepElement, index) {
+      if (index < step - 1) {
+        // Pasos completados: verde
+        stepElement.querySelector('.step-number').classList.add('bg-green-500', 'text-white');
+        stepElement.querySelector('.step-number').classList.remove('bg-gray-300', 'text-gray-700', 'bg-blue-500');
+      } else if (index === step - 1) {
+        // Paso actual: azul
+        stepElement.querySelector('.step-number').classList.add('bg-blue-500', 'text-white');
+        stepElement.querySelector('.step-number').classList.remove('bg-gray-300', 'text-gray-700');
+      } else {
+        // Pasos futuros: gris
+        stepElement.querySelector('.step-number').classList.add('bg-gray-300', 'text-gray-700');
+        stepElement.querySelector('.step-number').classList.remove('bg-blue-500', 'text-white', 'bg-green-500');
+      }
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    var paymentMethod = document.querySelector('[name="payment_method"]');
+    var paymentCardContainer = document.getElementById('payment-card-container');
+
+    paymentMethod.addEventListener('change', function() {
+      if (paymentMethod.value === 'credit_card') {
+        paymentCardContainer.style.display = 'block';
+      } else {
+        paymentCardContainer.style.display = 'none';
+      }
+    });
+
+    // Inicializar FullCalendar
+    var calendarEl = document.getElementById('calendar');
+    calendar = new FullCalendar.Calendar(calendarEl, {
+      initialView: 'timeGridWeek',
+      locale: 'es',
+      selectable: true,
+      select: function(info) {
+        var startTime = info.startStr;
+        var endTime = info.endStr;
+        document.getElementById('start_time').value = startTime;
+        document.getElementById('end_time').value = endTime;
+
+        // Determinar tipo de reserva según la duración
+        var start = new Date(startTime);
+        var end = new Date(endTime);
+        var duration = (end - start) / (1000 * 60 * 60); // duración en horas
+
+        var reservationType = 'hour';
+        var price = duration * {{ space.price_per_hour|floatformat:".2f" }};
+        if (duration >= 24) {
+          reservationType = 'day';
+          price = Math.ceil(duration / 24) * {{ space.price_per_day|floatformat:".2f" }};
+        }
+
+        document.getElementById('reservation_type').value = reservationType;
+        document.getElementById('price_info').innerText = `Precio: $${price.toFixed(2)}`;
+        document.getElementById('type_reservation').innerText = `Tipo de reservacion: ${reservationType === 'hour' ? 'Por Hora' : 'Por Día'}`;
+
+        // Validar si el precio (para reserva por hora) es igual o mayor al precio diario
+        var coworkingDailyPrice = parseFloat({{ space.price_per_day|floatformat:".2f" }});
+        var priceAlertElem = document.getElementById('price_alert');
+        if (reservationType === 'hour' && price >= coworkingDailyPrice) {
+          priceAlertElem.innerText = "El costo seleccionado es igual o superior al precio por día. Considere realizar una reserva por día para mayor comodidad.";
+          priceAlertElem.style.display = 'block';
+        } else {
+          priceAlertElem.innerText = "";
+          priceAlertElem.style.display = 'none';
+        }
+
+        // Remover selección anterior
+        if (selectedEvent) {
+          calendar.getEventById('selected').remove();
+        }
+        // Agregar nueva selección
+        selectedEvent = calendar.addEvent({
+          id: 'selected',
+          start: startTime,
+          end: endTime,
+          color: 'blue'
+        });
+      },
+      events: function(fetchInfo, successCallback, failureCallback) {
+        fetch(`/reservation/api/reservations/{{ space.id }}/`)
+          .then(response => response.json())
+          .then(events => successCallback(events))
+          .catch(error => failureCallback(error));
+      }
+    });
+
+    calendar.render();
+
+    // Inicializar el stepper en el paso 1
+    updateStepper(1);
+  });
 </script>
 {% endblock %}

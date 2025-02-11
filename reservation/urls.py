@@ -5,6 +5,7 @@ from .views import (
     cancel_reservation,
     all_reservations,
     get_reservations,
+    accept_contract,
 )
 
 urlpatterns = [
@@ -13,4 +14,9 @@ urlpatterns = [
     path("cancel/<int:reservation_id>/", cancel_reservation, name="cancel_reservation"),
     path("all_reservations/", all_reservations, name="all_reservations"),
     path("api/reservations/<int:space_id>/", get_reservations, name="get_reservations"),
+    path(
+        "reservation/accept/<int:reservation_id>/",
+        accept_contract,
+        name="accept_contract",
+    ),
 ]

@@ -216,6 +216,15 @@
             </div>
         </div>
     </nav>
+    {% if messages %}
+        <div class="container mt-4 mx-auto">
+        {% for message in messages %}
+            <div class="p-4 mb-4 text-sm text-green-700 bg-green-100 rounded-lg" role="alert">
+            {{ message }}
+            </div>
+        {% endfor %}
+        </div>
+    {% endif %}
 
     {% block content %}
     {% endblock %}
@@ -223,3 +232,4 @@
     <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
 </body>
 </html>
+

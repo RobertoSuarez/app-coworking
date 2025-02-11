@@ -9,6 +9,11 @@ from .models import Reservation
 from .forms import ReservationForm
 from .utils import send_whatsapp_message, send_whatsapp_message_via_api
 from django.http import JsonResponse
+from django.conf import settings
+from django.template.loader import render_to_string
+from django.urls import reverse
+from django.core.mail import EmailMultiAlternatives
+from django.contrib import messages
 
 
 @login_required
@@ -21,6 +26,7 @@ def create_reservation(request, space_id):
             reservation = form.save(commit=False)
             reservation.user = request.user
             reservation.space = space  # Asegurarse de asignar el espacio
+
             # Calcular el precio total basado en el tipo de reserva
             duration = (reservation.end_time - reservation.start_time).total_seconds()
             if reservation.reservation_type == "hour":
@@ -35,17 +41,51 @@ def create_reservation(request, space_id):
             elif reservation.reservation_type == "month":
                 months = Decimal(duration / 2592000)
                 reservation.total_price = space.price_per_month * months
+
             reservation.save()
 
-            # Enviar mensaje de WhatsApp
-            message = (
-                f"Hola {request.user.username}, tu reserva para '{space.name}' ha sido confirmada 🎉. \n"
-                f"Detalles de la reserva: \nInicio - {reservation.start_time.strftime('%d/%m/%Y %H:%M')} ⏰, \n"
-                f"Fin - {reservation.end_time.strftime('%d/%m/%Y %H:%M')} ⏰. \n"
-                f"Dirección: {space.location}."
+            # Preparar el correo electrónico con el contrato
+            subject = f"Contrato de Alquiler para {space.name}"
+            from_email = settings.DEFAULT_FROM_EMAIL
+            to = [request.user.email]
+
+            print(
+                "Nombre del usuario:",
+                request.user.get_full_name() or request.user.username,
             )
-            send_whatsapp_message(userProfile.phone_number, message)
-            send_whatsapp_message_via_api(userProfile.phone_number, message)
+            print("Correo del usuario:", request.user.email)
+
+            # Generar la URL para aceptar el contrato (se debe definir la vista 'accept_contract')
+            accept_contract_url = request.build_absolute_uri(
+                reverse("accept_contract", args=[reservation.id])
+            )
+
+            # Renderizar el template HTML del contrato
+            html_content = render_to_string(
+                "reservation/contract_email.html",
+                {
+                    "reservation": reservation,
+                    "space": space,
+                    "user": request.user,
+                    "accept_contract_url": accept_contract_url,
+                },
+            )
+            text_content = "Por favor, revise el contrato adjunto en el correo HTML."
+
+            # Enviar el email
+            msg = EmailMultiAlternatives(subject, text_content, from_email, to)
+            msg.attach_alternative(html_content, "text/html")
+            msg.send()
+
+            # Opcional: enviar mensaje de WhatsApp (comentado)
+            # message = (
+            #     f"Hola {request.user.username}, tu reserva para '{space.name}' ha sido confirmada 🎉. \n"
+            #     f"Detalles de la reserva: \nInicio - {reservation.start_time.strftime('%d/%m/%Y %H:%M')} ⏰, \n"
+            #     f"Fin - {reservation.end_time.strftime('%d/%m/%Y %H:%M')} ⏰. \n"
+            #     f"Dirección: {space.location}."
+            # )
+            # send_whatsapp_message(userProfile.phone_number, message)
+            # send_whatsapp_message_via_api(userProfile.phone_number, message)
 
             return redirect("coworking_detail", pk=space.id)
     else:
@@ -123,3 +163,14 @@ def all_reservations_admin(request):
         "coworking_spaces": coworking_spaces,
     }
     return render(request, "reservation/all_reservation_admin.html", context)
+
+
+@login_required
+def accept_contract(request, reservation_id):
+    reservation = get_object_or_404(Reservation, id=reservation_id, user=request.user)
+    # Aquí podrías marcar en el modelo Reservation que el contrato ha sido aceptado,
+    # por ejemplo: reservation.contract_accepted = True
+    # reservation.save()
+
+    messages.success(request, "Ha aceptado el contrato. Su reserva está confirmada.")
+    return redirect("coworking_detail", pk=reservation.space.id)

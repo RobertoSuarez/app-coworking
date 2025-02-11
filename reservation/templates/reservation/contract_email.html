@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Contrato de Alquiler - {{ space.name }}</title>
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6;">
+  <h1>Contrato de Alquiler para {{ space.name }}</h1>
+  <p>Estimado/a {{ user.username }},</p>
+  <p>Adjunto encontrará el contrato de alquiler para el espacio de coworking <strong>{{ space.name }}</strong>. Por favor, revise detenidamente los términos y condiciones:</p>
+  
+  <h2 style="font-family: Arial, sans-serif; color: #333;">Términos y Condiciones del Contrato de Alquiler del Espacio Coworking</h2>
+<ol style="font-family: Arial, sans-serif; color: #555; line-height: 1.6;">
+  <li>
+    <strong>Objeto del Contrato:</strong><br>
+    El presente contrato regula la relación entre <em>[Nombre del Coworking]</em> (en adelante, "El Arrendador") y el usuario (en adelante, "El Arrendatario") para el alquiler y uso del espacio de coworking.
+  </li>
+  <li>
+    <strong>Reservación y Duración:</strong><br>
+    La reserva se realizará de acuerdo con la disponibilidad del espacio y se confirmará en función del período seleccionado (por hora, por día, por semana o por mes). El Arrendatario se compromete a respetar la duración de la reserva acordada.
+  </li>
+  <li>
+    <strong>Tarifas y Pagos:</strong><br>
+    El costo de la reserva se determinará según el tiempo de uso y la tarifa vigente al momento de la reserva. En caso de que el costo calculado para una reserva por hora sea igual o superior al precio diario, se sugiere optar por la tarifa diaria. El pago deberá efectuarse conforme a las indicaciones proporcionadas en el proceso de reserva.
+  </li>
+  <li>
+    <strong>Uso Responsable del Espacio:</strong><br>
+    El Arrendatario se compromete a utilizar el espacio de manera responsable, respetando las normas de convivencia, el mobiliario e infraestructura del coworking. Cualquier daño ocasionado será responsabilidad del Arrendatario y podrá ser objeto de cobro adicional.
+  </li>
+  <li>
+    <strong>Política de Cancelación:</strong><br>
+    Las cancelaciones deberán realizarse conforme a la política establecida por el Arrendador. Dependiendo del momento en que se realice la cancelación, podrían aplicarse cargos adicionales.
+  </li>
+  <li>
+    <strong>Confidencialidad y Protección de Datos:</strong><br>
+    Toda la información proporcionada por el Arrendatario es confidencial y se utilizará exclusivamente para gestionar la reserva y prestar el servicio. El Arrendador se compromete a proteger los datos personales conforme a la legislación vigente.
+  </li>
+  <li>
+    <strong>Modificaciones:</strong><br>
+    El Arrendador se reserva el derecho de modificar estos términos y condiciones. Cualquier cambio será notificado y la versión vigente será la que se encuentre disponible en el momento de la reserva.
+  </li>
+  <li>
+    <strong>Aceptación del Contrato:</strong><br>
+    Al hacer clic en "Aceptar Contrato" en este correo, el Arrendatario declara haber leído, comprendido y aceptado todas las cláusulas del presente contrato. Una vez aceptado, se confirmará definitivamente la reserva y se enviará el contrato de alquiler a su correo electrónico.
+  </li>
+</ol>
+
+  
+  <p>Para aceptar el contrato, haga clic en el siguiente botón:</p>
+  <p>
+    <a href="{{ accept_contract_url }}" style="display: inline-block; background-color: #1E90FF; color: #ffffff; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Aceptar Contrato</a>
+  </p>
+  
+  <p>Una vez aceptado, se confirmará su reserva.</p>
+  
+  <p>Saludos cordiales,</p>
+  <p>El equipo de Coworking</p>
+</body>
+</html>
