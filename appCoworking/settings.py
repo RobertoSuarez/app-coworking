@@ -16,7 +16,7 @@ SECRET_KEY = "django-insecure-n!#91^8#haw^dkjfi+dz&$u35=yffrd^4%wcz_heq32#u2(u^5
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["https://app-coworking.onrender.com"]
 
 
 # Application definition
