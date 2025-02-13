@@ -18,6 +18,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["app-coworking.onrender.com"]
 
+CSRF_TRUSTED_ORIGINS = ["https://app-coworking.onrender.com"]
+
 
 # Application definition
 
