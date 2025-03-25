@@ -16,7 +16,7 @@ SECRET_KEY = "django-insecure-n!#91^8#haw^dkjfi+dz&$u35=yffrd^4%wcz_heq32#u2(u^5
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["app-coworking.onrender.com"]
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", "app-coworking.onrender.com"]
 
 CSRF_TRUSTED_ORIGINS = ["https://app-coworking.onrender.com"]
 

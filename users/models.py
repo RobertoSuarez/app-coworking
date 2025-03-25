@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+import pyotp
 
 
 class UserProfile(models.Model):
@@ -10,6 +11,15 @@ class UserProfile(models.Model):
     )
     location = models.CharField(max_length=255, blank=True, null=True)
     phone_number = models.CharField(max_length=20, blank=True, null=True)
+    otp_secret = models.CharField(max_length=64, null=True)
 
     def __str__(self):
         return self.user.username
+
+    def generate_otp(self):
+        totp = pyotp.TOTP(self.otp_secret)
+        return totp.now()
+
+    def verify_otp(self, otp):
+        totp = pyotp.TOTP(self.otp_secret)
+        return totp.verify(otp)

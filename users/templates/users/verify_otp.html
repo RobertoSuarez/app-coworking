@@ -1,0 +1,28 @@
+<!-- filepath: /home/buffer/srcpy/appCoworking/users/templates/users/verify_otp.html -->
+<form method="post">
+    {% csrf_token %}
+    <div class="mb-4">
+        <label for="otp" class="block text-sm font-medium text-gray-700">Introduce tu OTP</label>
+        <input
+            type="text"
+            name="otp"
+            id="otp"
+            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+            required
+        />
+    </div>
+    <button
+        type="submit"
+        class="inline-block w-full rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+    >
+        Verificar OTP
+    </button>
+    {% if error %}
+        <p class="mt-2 text-sm text-red-600">{{ error }}</p>
+    {% endif %}
+</form>
+
+<form method="post" action="{% url 'send_otp' %}">
+    {% csrf_token %}
+    <button type="submit" class="mt-4 text-blue-600 underline">Reenviar OTP</button>
+</form>
