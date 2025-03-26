@@ -11,7 +11,9 @@ class UserProfile(models.Model):
     )
     location = models.CharField(max_length=255, blank=True, null=True)
     phone_number = models.CharField(max_length=20, blank=True, null=True)
-    otp_secret = models.CharField(max_length=64, null=True)
+    otp_secret = models.CharField(
+        max_length=64, default=pyotp.random_base32, blank=True
+    )
 
     def __str__(self):
         return self.user.username

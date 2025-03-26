@@ -1,19 +1,23 @@
-<!-- filepath: /home/buffer/srcpy/appCoworking/users/templates/users/verify_otp.html -->
-<form method="post">
+{% extends "base_lading_page.html" %}
+
+{% load tailwind_filters %}
+{% block content %}
+
+<form method="post" class="max-w-md mx-auto mt-8 p-6 bg-white rounded-lg shadow-lg">
     {% csrf_token %}
-    <div class="mb-4">
-        <label for="otp" class="block text-sm font-medium text-gray-700">Introduce tu OTP</label>
+    <div class="mb-6">
+        <label for="otp" class="block text-lg font-semibold text-gray-700">Introduce tu OTP</label>
         <input
             type="text"
             name="otp"
             id="otp"
-            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+            class="mt-2 block w-full rounded-lg border-gray-300 shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 py-2 px-4 text-sm"
             required
         />
     </div>
     <button
         type="submit"
-        class="inline-block w-full rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+        class="w-full py-3 mt-4 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"
     >
         Verificar OTP
     </button>
@@ -22,7 +26,10 @@
     {% endif %}
 </form>
 
-<form method="post" action="{% url 'send_otp' %}">
+<form method="post" action="{% url 'send_otp' %}" class="max-w-md mx-auto mt-4 p-6 bg-white rounded-lg shadow-lg">
     {% csrf_token %}
-    <button type="submit" class="mt-4 text-blue-600 underline">Reenviar OTP</button>
+    <button type="submit" class="text-blue-600 underline font-medium hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200">
+        Reenviar OTP
+    </button>
 </form>
+{% endblock content %}
