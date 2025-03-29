@@ -103,7 +103,8 @@
           </p>
           <div class="mt-4 flex justify-between">
             <button type="button" class="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700" onclick="prevStep(2)">Anterior</button>
-            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Continuar</button>
+            <button id="continuar" type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Continuar</button>
+            <button id="pago-con-tarjeta" type="button" class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700">Solicitar pago con tarjeta</button>
           </div>
         </div>
       </div>
@@ -116,10 +117,14 @@
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.js'></script>
 <!-- Incluir locales para FullCalendar -->
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/locales-all.min.js'></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 
 <script>
   var calendar;
   var selectedEvent;
+  var elButtonSolicitarPago = document.getElementById('pago-con-tarjeta');
+  var elButtonContinuar = document.getElementById('continuar');
 
   function nextStep(step) {
     document.querySelectorAll('.step-content').forEach(function(content) {
@@ -128,7 +133,12 @@
     document.getElementById('step-content-' + step).classList.remove('hidden');
     updateStepper(step);
 
+    
+    
+
     if (step === 3) {
+     
+
       // Actualizar información de resumen
       var startTimeVal = document.getElementById('start_time').value;
       var endTimeVal = document.getElementById('end_time').value;
@@ -150,7 +160,27 @@
       if (paymentMethodSelect) {
         var selectedOption = paymentMethodSelect.options[paymentMethodSelect.selectedIndex].text;
         document.getElementById('summary_payment_method').innerText = selectedOption;
+        console.log(selectedOption);
+        if (selectedOption === 'Tarjeta de Crédito/Débito') {
+          elButtonContinuar.hidden = true;
+          elButtonSolicitarPago.hidden = false;
+          elButtonSolicitarPago.addEventListener('click', (e) => {
+            Swal.fire({
+              title: "¡Pago Solicitado!",
+              text: "El pago con la tarjeta si realizo con exito.",
+              icon: "success",
+              showConfirmButton: false
+            });
+            elButtonContinuar.hidden = false;
+            elButtonSolicitarPago.hidden = true;
+          })
+
+        } else {
+          elButtonContinuar.hidden = false;
+          elButtonSolicitarPago.hidden = true;
+        }
       }
+
     }
   }
 
